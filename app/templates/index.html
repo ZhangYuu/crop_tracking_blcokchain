@@ -15,7 +15,10 @@
 		  <option value="Market">Market</option>
 		</select>
 	    <br>
+	    <input type="text" name="grass_ID" placeholder="Grass_ID">
+	    <br>
 	    <input type="text" name="quantity" placeholder="Liter of CBD">
+	    <br>
 	    <input type="submit" value="Post">
 	</form>
 	</center>
@@ -37,7 +40,9 @@
 	   </div>
 	   <div>
 	      <div class="post_box-body">
-	         <p>{{post.content}}</p>
+	         <p>Garss ID: {{post.grass_ID}}</p>
+	         <p>Contetnt: {{post.content}}</p>
+	         <p>Quantity: {{post.quantity}}</p>
 	      </div>
 	   </div>
 	</div>
