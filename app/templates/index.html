@@ -19,6 +19,8 @@
 	    <br>
 	    <input type="text" name="quantity" placeholder="Liter of CBD">
 	    <br>
+	    <input id="date" type="date" name="date">
+	    <br>
 	    <input type="submit" value="Post">
 	</form>
 	</center>
@@ -41,6 +43,8 @@
 	   <div>
 	      <div class="post_box-body">
 	         <p>Garss ID: {{post.grass_ID}}</p>
+	         <p>Date: {{post.date}}</p>
+	         <p>Hash: {{post.hash}}</p>	   	         
 	         <p>Contetnt: {{post.content}}</p>
 	         <p>Quantity: {{post.quantity}}</p>
 	      </div>

@@ -1,8 +1,8 @@
 import datetime
 import json
-
+import os
 import requests
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, send_from_directory
 
 from app import app
 
@@ -53,12 +53,22 @@ def download():
     fo = open("backup_chain.md", "w") 
     fo.write(str(get_chain(CONNECTED_NODE_ADDRESS + '/chain')))
     fo.close()
-    return redirect('/')
+    directory=os.getcwd()
+    return send_from_directory(directory, 'backup_chain.md', as_attachment=True)
+    #return redirect('/')
 
 
-@app.route('/search',methods=['POST'])
-def search(hash_number): 
-    #
+@app.route('/search',methods=['GET'])
+def search(): 
+    #search function
+    hash_number = "1d07f47ce9b7b772e4b3c6dfe3e97d2ddd218d1d47f986e12fe3a4d8eb73be15"
+    print(hash_number)
+    blocks = get_chain(CONNECTED_NODE_ADDRESS + '/chain')
+    for block in blocks:
+        if block['hash'] == hash_number:
+            print ("Got it")
+            print (block['transactions']) 
+            return str(block)
     return True
 
 @app.route('/submit', methods=['POST'])
@@ -69,6 +79,7 @@ def submit_textarea():
     post_content = request.form["content"]
     author = request.form["author"]
     quantity = request.form["quantity"]
+    date = request.form["date"]
     if author == "Farm":
         global grass_ID
         grass_ID += 1
@@ -76,12 +87,12 @@ def submit_textarea():
         grass_ID = int(request.form["grass_ID"])
 
     post_object = {
+        'date': date,
         'grass_ID': grass_ID,
         'author': author,
         'content': post_content,
         'quantity': quantity
     }
-
     # Submit a transaction
     new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
 
