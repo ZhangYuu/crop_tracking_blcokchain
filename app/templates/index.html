@@ -7,10 +7,6 @@
 	<center>
 	<form action="/submit" id="textform" method="post">
 	    <input type="text" name="del_hash" placeholder="Delete Hash">
-	    <select name="operation">
-		  <option value ="Del_blocl">Delete</option>
-		  <option value ="New_block">Create</option>
-		</select>
 		<br>
 	    <textarea name="content" rows="4" cols="50" placeholder="Write Down Detailed Content..."></textarea>
 	    <br>
@@ -19,6 +15,7 @@
 		  <option value ="Oil Factory">Oil Factory</option>
 		  <option value="Medicine Factory">Medicine Factory</option>
 		  <option value="Market">Market</option>
+		  <option value="Delete">Delete</option>
 		</select>
 	    <br>
 	    <input type="text" name="grass_ID" placeholder="Grass_ID">
@@ -62,6 +59,7 @@
 	         <p>Hash: {{post.hash}}</p>	   	         
 	         <p>Contetnt: {{post.content}}</p>
 	         <p>Quantity: {{post.quantity}}</p>
+	         <P>Delete: {{post.delete_hash}}
 	      </div>
 	   </div>
 	</div>
