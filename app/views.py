@@ -10,11 +10,9 @@ from app import app
 # such nodes as well.
 CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
 
-grass_ID=0
-
+grass_ID=0 #这个数字重启服务器会被重置，需要修改
 
 posts = []
-
 
 def fetch_posts():
     """
@@ -46,6 +44,7 @@ def index():
                            node_address=CONNECTED_NODE_ADDRESS,
                            readable_time=timestamp_to_string)
 
+
 @app.route('/download',methods=['GET'])
 def download():
     #把chain写进md文件
@@ -58,24 +57,73 @@ def download():
     #return redirect('/')
 
 
-@app.route('/search',methods=['GET'])
+@app.route('/search',methods=['POST'])
 def search(): 
     #search function
-    hash_number = "1d07f47ce9b7b772e4b3c6dfe3e97d2ddd218d1d47f986e12fe3a4d8eb73be15"
+    hash_number = request.form["search_hash"]
+    product_history = []
+    del_list=[]
+    product_ID=""
+    #hash_number = "1d07f47ce9b7b772e4b3c6dfe3e97d2ddd218d1d47f986e12fe3a4d8eb73be15"
     print(hash_number)
     blocks = get_chain(CONNECTED_NODE_ADDRESS + '/chain')
+#    for block in blocks:
+ #       if block['transactions']!=[]:
+  #          if block['transactions'][0]['del_hash'] != '':
+   #             del_list.append(block['transactions'][0]['del_hash'])
     for block in blocks:
         if block['hash'] == hash_number:
-            print ("Got it")
-            print (block['transactions']) 
-            return str(block)
-    return True
+            product_ID = block['transactions'][0]['grass_ID']
+            break
+    for block in blocks:
+        if block['transactions']!=[]:
+            if block['transactions'][0]['grass_ID'] == product_ID and block['hash'] not in del_list:
+                product_history.append(block['transactions'])
+    print(len(product_history),product_ID)
+    return str(product_history)
+
+'''
+@app.route('/submit', methods=['POST'])
+def submit_textarea():
+    """
+    Endpoint to create a new transaction via our application.
+    """
+    del_hash = request.form["del_hash"]
+    post_content = request.form["content"]
+    author = request.form["author"]
+    quantity = request.form["quantity"]
+    date = request.form["date"]
+    if author == "Farm":
+        global grass_ID
+        grass_ID += 1
+    else:
+        grass_ID = int(request.form["grass_ID"])
+
+    post_object = {
+        'del_hash':del_hash,
+        'date': date,
+        'grass_ID': grass_ID,
+        'author': author,
+        'content': post_content,
+        'quantity': quantity
+    }
+    # Submit a transaction
+    new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
+    requests.post(new_tx_address,
+                  json=post_object,
+                  headers={'Content-type': 'application/json'})
+    #auto mining the transaction block after submit
+    miner_url = CONNECTED_NODE_ADDRESS + "/mine"
+    auto_miner(miner_url)
+    return redirect('/')
+'''
 
 @app.route('/submit', methods=['POST'])
 def submit_textarea():
     """
     Endpoint to create a new transaction via our application.
     """
+    #delete_hash = request.form["del_hash"]
     post_content = request.form["content"]
     author = request.form["author"]
     quantity = request.form["quantity"]
@@ -91,7 +139,8 @@ def submit_textarea():
         'grass_ID': grass_ID,
         'author': author,
         'content': post_content,
-        'quantity': quantity
+        'quantity': quantity,
+ #       'del_hash': delete_hash
     }
     # Submit a transaction
     new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
@@ -103,6 +152,7 @@ def submit_textarea():
     miner_url = CONNECTED_NODE_ADDRESS + "/mine"
     auto_miner(miner_url)
     return redirect('/')
+
 
 #mine latest block
 def auto_miner(url_mine):

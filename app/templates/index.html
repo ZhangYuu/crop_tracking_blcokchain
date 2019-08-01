@@ -6,6 +6,12 @@
 
 	<center>
 	<form action="/submit" id="textform" method="post">
+	    <input type="text" name="del_hash" placeholder="Delete Hash">
+	    <select name="operation">
+		  <option value ="Del_blocl">Delete</option>
+		  <option value ="New_block">Create</option>
+		</select>
+		<br>
 	    <textarea name="content" rows="4" cols="50" placeholder="Write Down Detailed Content..."></textarea>
 	    <br>
 	    <select name="author">
@@ -22,13 +28,22 @@
 	    <input id="date" type="date" name="date">
 	    <br>
 	    <input type="submit" value="Post">
+	    <br>
 	</form>
-	</center>
 
-	<br>
+	<form action="/search" id="textform" method="post">
+	    <br>
+	    <input type="text" name="search_hash" placeholder="Product HashTag">
+	    <input type="submit" value="Search">
+	    <br>
+	</form>
+
+	</center>
 
 	<a href="{{node_address}}/mine" target="_blank"><button>Request to mine</button></a>
 	<a href="/"><button>Resync</button></a>
+	<a href="/download"><button>download</button></a>
+
 
 	<div style="margin: 20px;">
 
