@@ -3,9 +3,11 @@ import json
 import os
 import requests
 from flask import render_template, redirect, request, send_from_directory
+from flask_bootstrap import Bootstrap
 
 from app import app
 
+bootstrap = Bootstrap(app)
 # The node with which our application interacts, there can be multiple
 # such nodes as well.
 CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
@@ -83,10 +85,14 @@ def search():
   #          if block['transactions'][0]['del_hash'] != '':
    #             del_list.append(block['transactions'][0]['del_hash'])
     for block in blocks:
-        if block['hash'] == hash_number:
-            if block['transactions'][0]['is_delete_block'] == 0:
-                product_ID = block['transactions'][0]['grass_ID']
-            break
+        if block['transactions']!=[]:
+            if block['hash'] == hash_number:
+                if block['transactions'][0]['is_delete_block'] == 0:
+                    product_ID = block['transactions'][0]['grass_ID']
+            if block['transactions'][0]['is_delete_block'] == 1:
+                print('add delete block during search!')
+                del_list.append(block['transactions'][0]['del_hash'])
+
     for block in blocks:
         if block['transactions']!=[]:
             if block['transactions'][0]['is_delete_block'] == 0:
