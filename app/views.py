@@ -84,12 +84,14 @@ def search():
    #             del_list.append(block['transactions'][0]['del_hash'])
     for block in blocks:
         if block['hash'] == hash_number:
-            product_ID = block['transactions'][0]['grass_ID']
+            if block['transactions'][0]['is_delete_block'] == 0:
+                product_ID = block['transactions'][0]['grass_ID']
             break
     for block in blocks:
         if block['transactions']!=[]:
-            if block['transactions'][0]['grass_ID'] == product_ID and block['hash'] not in del_list:
-                product_history.append(block['transactions'])
+            if block['transactions'][0]['is_delete_block'] == 0:
+                if block['transactions'][0]['grass_ID'] == product_ID and block['hash'] not in del_list:
+                    product_history.append(block['transactions'])
     print(len(product_history),product_ID)
     return str(product_history)
 
