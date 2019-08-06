@@ -23,12 +23,23 @@ def fetch_posts():
     response = requests.get(get_chain_address)
     if response.status_code == 200:
         content = []
+        dic = {}
         chain = json.loads(response.content)
         for block in chain["chain"]:
             for tx in block["transactions"]:
+                print(tx)
+                if tx["is_delete_block"] == 1:
+                    index = dic[tx["del_hash"]]
+                    print("deleted block index",index)
+                    content[index]["is_deleted"] = "true"
+                    continue
+
                 tx["index"] = block["index"]
-                tx["hash"] = block["previous_hash"]
+                tx["hash"] = block["hash"]
+                tx["is_deleted"] = "false"
                 content.append(tx)
+                print("new block added, count is", len(content))
+                dic[tx["hash"]] = len(content) - 1
         global posts
         posts = sorted(content, key=lambda k: k['timestamp'],
                        reverse=True)
@@ -82,66 +93,39 @@ def search():
     print(len(product_history),product_ID)
     return str(product_history)
 
-'''
 @app.route('/submit', methods=['POST'])
 def submit_textarea():
     """
     Endpoint to create a new transaction via our application.
     """
-    del_hash = request.form["del_hash"]
+    delete_hash = request.form["del_hash"]
     post_content = request.form["content"]
     author = request.form["author"]
     quantity = request.form["quantity"]
     date = request.form["date"]
-    if author == "Farm":
-        global grass_ID
-        grass_ID += 1
+
+    if delete_hash != "":
+        post_object = {
+            'del_hash': delete_hash
+        }
+        print('do delete', post_object)
     else:
-        grass_ID = int(request.form["grass_ID"])
+        print('do not delete',delete_hash)
+        if author == "Farm":
+            global grass_ID
+            grass_ID += 1
+        else:
+            grass_ID = int(request.form["grass_ID"])
 
-    post_object = {
-        'del_hash':del_hash,
-        'date': date,
-        'grass_ID': grass_ID,
-        'author': author,
-        'content': post_content,
-        'quantity': quantity
-    }
-    # Submit a transaction
-    new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
-    requests.post(new_tx_address,
-                  json=post_object,
-                  headers={'Content-type': 'application/json'})
-    #auto mining the transaction block after submit
-    miner_url = CONNECTED_NODE_ADDRESS + "/mine"
-    auto_miner(miner_url)
-    return redirect('/')
-'''
+        post_object = {
+            'date': date,
+            'grass_ID': grass_ID,
+            'author': author,
+            'content': post_content,
+            'quantity': quantity,
+    #       'del_hash': delete_hash
+        }
 
-@app.route('/submit', methods=['POST'])
-def submit_textarea():
-    """
-    Endpoint to create a new transaction via our application.
-    """
-    #delete_hash = request.form["del_hash"]
-    post_content = request.form["content"]
-    author = request.form["author"]
-    quantity = request.form["quantity"]
-    date = request.form["date"]
-    if author == "Farm":
-        global grass_ID
-        grass_ID += 1
-    else:
-        grass_ID = int(request.form["grass_ID"])
-
-    post_object = {
-        'date': date,
-        'grass_ID': grass_ID,
-        'author': author,
-        'content': post_content,
-        'quantity': quantity,
- #       'del_hash': delete_hash
-    }
     # Submit a transaction
     new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
 

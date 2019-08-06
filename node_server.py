@@ -157,12 +157,18 @@ peers = set()
 @app.route('/new_transaction', methods=['POST'])
 def new_transaction():
     tx_data = request.get_json()
-    required_fields = ["author"]
-    #required_fields = ["author", "content"]
+    print(tx_data)
 
-    for field in required_fields:
-        if not tx_data.get(field):
-            return "Invlaid transaction data", 404
+    if tx_data.get("del_hash"):
+        tx_data["is_delete_block"] = 1
+        print('new delete block!')
+    else:
+        required_fields = ["author"]
+        tx_data["is_delete_block"] = 0
+        #required_fields = ["author", "content"]
+        for field in required_fields:
+            if not tx_data.get(field):
+                return "Invlaid transaction data", 404
 
     tx_data["timestamp"] = time.time()
 
