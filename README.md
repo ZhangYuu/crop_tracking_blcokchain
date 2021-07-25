@@ -20,4 +20,4 @@ To run the application,
 $ python run_app.py
 ```
 
-The application should be up and running at [http://localhost:5000](http://localhost:5000).
+The application should be up and running at [http://localhost:80](http://localhost:80).
